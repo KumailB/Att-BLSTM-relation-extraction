@@ -131,7 +131,7 @@ class SemEvalDataLoader(object):
         self.word2id = word2id
         self.config = config
 
-    def __collate_fn(self, batch):
+    def collate_fn(self, batch):
         data, label = zip(*batch)  # unzip the batch data
         data = list(data)
         label = list(label)
@@ -146,7 +146,7 @@ class SemEvalDataLoader(object):
             batch_size=self.config.batch_size,
             shuffle=shuffle,
             num_workers=2,
-            collate_fn=self.__collate_fn
+            collate_fn=self.collate_fn
         )
         return loader
 
