@@ -56,7 +56,7 @@ class Att_BLSTM(nn.Module):
 
     def lstm_layer(self, x, mask):
         lengths = torch.sum(mask.gt(0), dim=-1)
-        x = pack_padded_sequence(x, lengths, batch_first=True, enforce_sorted=False)
+        x = pack_padded_sequence(x, lengths.to('cpu'), batch_first=True, enforce_sorted=False)
         h, (_, _) = self.lstm(x)
         h, _ = pad_packed_sequence(h, batch_first=True, padding_value=0.0, total_length=self.max_len)
         h = h.view(-1, self.max_len, 2, self.hidden_size)

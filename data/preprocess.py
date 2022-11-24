@@ -6,6 +6,7 @@ import json
 import re
 from nltk.tokenize import word_tokenize
 
+RELEVANT_SEM_REL = { "Cause-Effect", "Component-Whole", "Product-Producer" }
 
 def search_entity(sentence):
     e1 = re.findall(r'<e1>(.*)</e1>', sentence)[0]
@@ -36,9 +37,13 @@ def convert(path_src, path_des):
             id_s, sentence = data[i].strip().split('\t')
             sentence = sentence[1:-1]
             sentence = search_entity(sentence)
+            relation = data[i+1].strip()
+            label_class = relation.split("(")[0]
+            if label_class not in RELEVANT_SEM_REL:
+                relation = "Other"
             meta = dict(
                 id=id_s,
-                relation=data[i+1].strip(),
+                relation=relation,
                 sentence=sentence,
                 comment=data[i+2].strip()[8:]
             )
@@ -47,8 +52,8 @@ def convert(path_src, path_des):
 
 
 if __name__ == '__main__':
-    path_train = './SemEval2010_task8_all_data/SemEval2010_task8_training/TRAIN_FILE.TXT'
-    path_test = './SemEval2010_task8_all_data/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT'
+    path_train = './data/SemEval2010_task8_all_data/SemEval2010_task8_training/TRAIN_FILE.TXT'
+    path_test = './data/SemEval2010_task8_all_data/SemEval2010_task8_testing_keys/TEST_FILE_FULL.TXT'
 
     convert(path_train, 'train.json')
     convert(path_test, 'test.json')
